@@ -46,8 +46,8 @@ module Extensions
         raise "[!] Failed to set permission" unless system "chown -R #{node[:elasticsearch][:user]}:#{node[:elasticsearch][:user]} #{node[:elasticsearch][:path][:plugins]}"
       end
 
-      notifies :restart, 'service[monit]' unless node[:elasticsearch][:skip_restart]
-
+      notifies :run, resources(:execute => "reload-monit") unless node[:elasticsearch][:skip_restart]
+      
       not_if do
         Dir.entries(node[:elasticsearch][:path][:plugins]).any? do |plugin|
           next if plugin =~ /^\./
