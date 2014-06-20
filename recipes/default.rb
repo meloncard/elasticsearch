@@ -1,4 +1,5 @@
 #-*- encoding : utf-8 -*-
+[Chef::Recipe, Chef::Resource].each { |l| l.send :include, ::Extensions }
 
 # Create Directories
 [ node[:elasticsearch][:path][:conf], node[:elasticsearch][:path][:data], node[:elasticsearch][:path][:logs], node[:elasticsearch][:path][:pids] ].each do |path|

@@ -40,3 +40,8 @@ All that's needed to make this work on OpsWorks is to add the appropriate config
   }
 }
 ```
+
+Note
+----
+
+Incorporates code under Apache license from https://github.com/elasticsearch/cookbook-elasticsearch

@@ -34,25 +34,3 @@ link "#{node[:elasticsearch][:home_dir]}" do
   to "#{node[:elasticsearch][:home_dir]}-#{node[:elasticsearch][:version]}"
   not_if "ls #{node[:elasticsearch][:home_dir]}"
 end
-
-if !!node[:elasticsearch][:basic_auth]
-  directory node[:elasticsearch][:path][:plugins] do
-    owner node[:elasticsearch][:user]
-    group node[:elasticsearch][:user]
-  end
-
-  cookbook_file "#{node[:elasticsearch][:path][:plugins]}/elasticsearch-http-basic-1.0.3.jar" do
-    source "elasticsearch-http-basic-1.0.3.jar"
-    owner node[:elasticsearch][:user]
-    group node[:elasticsearch][:user]
-    mode 0755
-    backup false
-    action :create_if_missing
-  end
-
-  execute "unzip elasticsearch jar" do
-    command "unzip #{node[:elasticsearch][:path][:plugins]}/elasticsearch-http-basic-1.0.3.jar -d #{node[:elasticsearch][:path][:plugins]}/http-basic"
-    user node[:elasticsearch][:user]
-    not_if "ls #{node[:elasticsearch][:path][:plugins]}/http-basic"
-  end
-end

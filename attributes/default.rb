@@ -10,7 +10,8 @@ default.elasticsearch[:download_url]  = [node.elasticsearch[:host], node.elastic
 default.elasticsearch[:dir]       = "/data"
 default.elasticsearch[:user]      = "elasticsearch"
 default.elasticsearch[:home_dir]  = [node.elasticsearch[:dir], node.elasticsearch[:user]].join('/')
-default.elasticsearch[:command_path]  = [node.elasticsearch[:home_dir], 'bin', 'elasticsearch'].join('/')
+default.elasticsearch[:bin_dir]  = [node.elasticsearch[:home_dir], 'bin'].join('/')
+default.elasticsearch[:command_path]  = [node.elasticsearch[:bin_dir], 'elasticsearch'].join('/')
 
 default.elasticsearch[:path][:conf] = [node.elasticsearch[:home_dir], "config"].join('/')
 default.elasticsearch[:path][:data] = [node.elasticsearch[:home_dir], "data"].join('/')
@@ -29,3 +30,6 @@ default.elasticsearch[:thread_stack_size] = "256k"
 
 # === NODE
 default.elasticsearch[:node][:name]    = "0"
+
+# === PLUGINS
+default.elasticsearch[:plugins]    = {}
