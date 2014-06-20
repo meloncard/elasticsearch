@@ -19,6 +19,8 @@ default.elasticsearch[:path][:logs] = ['/var/log',node.elasticsearch[:user]].joi
 default.elasticsearch[:path][:pids] = '/var/run'
 default.elasticsearch[:pid_file]  = [node.elasticsearch[:path][:pids], "elasticsearch.pid"].join('/')
 
+default.elasticsearch[:monit_dir] = "/etc/monit.d"
+
 # === MEMORY
 # Maximum amount of memory to use is automatically computed as one half of total available memory on the machine.
 # You may choose to set it in your node/role configuration instead.
