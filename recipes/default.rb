@@ -56,13 +56,15 @@ execute "reload-monit" do
   action :nothing
 end
 
-bash "restart-elasticsearch" do
-  code "monit -I restart elasticsearch"
+execute "restart-elasticsearch" do
+  command "monit -I restart elasticsearch"
   user "root"
 
   only_if do
     File.exists?("#{node[:elasticsearch][:monit_dir]}/elasticsearch.monitrc")
   end
+
+  action :nothing
 end
 
 # Configration
