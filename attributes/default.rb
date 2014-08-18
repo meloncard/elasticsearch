@@ -38,7 +38,7 @@ default.elasticsearch[:limits][:nofile]  = '64000'
 default.elasticsearch[:thread_stack_size] = "256k"
 
 # === NODE
-default.elasticsearch[:node][:name] = "0"
+default.elasticsearch[:node][:name] = node[:opsworks][:instance][:hostname]
 default.elasticsearch[:node][:master] = nil
 default.elasticsearch[:node][:data] = nil
 default.elasticsearch[:node][:attributes] = {}
