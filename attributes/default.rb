@@ -70,3 +70,5 @@ default.elasticsearch[:indices][:recovery][:concurrent_streams] = nil
 default.elasticsearch[:plugins]            = {}
 default.elasticsearch[:plugin][:mandatory] = []
 
+# === CUSTOM CONFIG
+default.elasticsearch[:custom_config] = {}

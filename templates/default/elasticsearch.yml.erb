@@ -443,3 +443,10 @@ http.basic.enabled: <%= (!!node.elasticsearch[:basic_auth]).to_s %>
 http.basic.user: "<%= node.elasticsearch[:basic_auth][:user] %>"
 http.basic.password: "<%= node.elasticsearch[:basic_auth][:password] %>"
 <% end -%>
+
+<% if node.elasticsearch[:custom_config].any? -%>
+################################## Custom Config #############################
+<% node.elasticsearch[:custom_config].sort.each do |key, value| -%>
+<%= key %>: <%= value %>
+<% end %>
+<% end -%>
