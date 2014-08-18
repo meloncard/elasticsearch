@@ -56,6 +56,15 @@ execute "reload-monit" do
   action :nothing
 end
 
+bash "restart-elasticsearch" do
+  code "monit -I restart elasticsearch"
+  user "root"
+
+  only_if do
+    File.exists?("#{node[:elasticsearch][:monit_dir]}/elasticsearch.monitrc")
+  end
+end
+
 # Configration
 instances = node[:opsworks][:layers][:elasticsearch][:instances]
 hosts = instances.map{ |name, attrs| attrs['private_ip'] }
@@ -67,7 +76,7 @@ template "elasticsearch.yml" do
   group node[:elasticsearch][:user]
   mode 0755
   variables :hosts => hosts
-  notifies :run, resources(:execute => "reload-monit")
+  notifies :run, resources(:execute => "restart-elasticsearch")
 end
 
 # Monitoring by Monit
