@@ -67,6 +67,7 @@ template "elasticsearch.yml" do
   group node[:elasticsearch][:user]
   mode 0755
   variables :hosts => hosts
+  notifies :run, resources(:execute => "reload-monit")
 end
 
 # Monitoring by Monit
