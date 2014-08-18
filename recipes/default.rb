@@ -12,6 +12,27 @@
   end
 end
 
+# Increase open file and memory limits
+#
+bash "enable user limits" do
+  user 'root'
+
+  code <<-END.gsub(/^    /, '')
+    echo 'session    required   pam_limits.so' >> /etc/pam.d/su
+  END
+
+  not_if { ::File.read("/etc/pam.d/su").match(/^session    required   pam_limits\.so/) }
+end
+
+log "increase limits for the elasticsearch user"
+
+file "/etc/security/limits.d/10-elasticsearch.conf" do
+  content <<-END.gsub(/^    /, '')
+    #{node[:elasticsearch][:user]}     -    nofile    #{node.elasticsearch[:limits][:nofile]}
+    #{node[:elasticsearch][:user]}     -    memlock   #{node.elasticsearch[:limits][:memlock]}
+  END
+end
+
 template "elasticsearch-env.sh" do
   path   "#{node[:elasticsearch][:path][:conf]}/elasticsearch-env.sh"
   source "elasticsearch-env.sh.erb"
