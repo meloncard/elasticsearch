@@ -62,7 +62,7 @@ default.elasticsearch[:gateway][:type] = nil
 default.elasticsearch[:gateway][:recover_after_nodes] = nil
 default.elasticsearch[:gateway][:recover_after_time] = nil
 default.elasticsearch[:gateway][:expected_nodes] = nil
-default.elasticsearch[:routing][:allocation][:node_concurrent_recoveries] = nil
+default.elasticsearch[:cluster][:routing][:allocation][:node_concurrent_recoveries] = nil
 default.elasticsearch[:indices][:recovery][:max_size_per_sec] = nil
 default.elasticsearch[:indices][:recovery][:concurrent_streams] = nil
 
