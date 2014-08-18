@@ -29,7 +29,7 @@
 # Cluster name identifies your cluster for auto-discovery. If you're running
 # multiple clusters on the same network, make sure you're using unique names.
 #
-cluster.name: elasticsearch
+cluster.name: <%= node.elasticsearch[:cluster_name] %>
 
 
 #################################### Node #####################################
@@ -38,7 +38,9 @@ cluster.name: elasticsearch
 # from configuring them manually. You can tie this node to a specific name:
 #
 # node.name: "Franz Kafka"
-
+<% unless node.elasticsearch[:node][:name].nil? -%>
+node.name: <%= node.elasticsearch[:node][:name] %>
+<% end -%>
 
 # Every node can be configured to allow or deny being eligible as the master,
 # and to allow or deny to store the data.
@@ -71,6 +73,12 @@ cluster.name: elasticsearch
 #
 # node.master: false
 # node.data: false
+<% unless node.elasticsearch[:node][:master].nil? -%>
+node.master: <%= node.elasticsearch[:node][:master] %>
+<% end -%>
+<% unless node.elasticsearch[:node][:data].nil? -%>
+node.data: <%= node.elasticsearch[:node][:data] %>
+<% end -%>
 
 # Use the Cluster Health API [http://localhost:9200/_cluster/health], the
 # Node Info API [http://localhost:9200/_cluster/nodes] or GUI tools
@@ -82,7 +90,11 @@ cluster.name: elasticsearch
 # is a simple key value pair, similar to node.key: value, here is an example:
 #
 # node.rack: rack314
-
+<% if node.elasticsearch[:node][:attributes].any? -%>
+  <% node.elasticsearch[:node][:attributes].each do |attr, val| -%>
+node.<%= attr %>: <%= val %>
+  <% end -%>
+<% end -%>
 # By default, multiple nodes are allowed to start from the same installation location
 # to disable it, set the following:
 # node.max_local_storage_nodes: 1
@@ -105,10 +117,16 @@ cluster.name: elasticsearch
 # Set the number of shards (splits) of an index (5 by default):
 #
 # index.number_of_shards: 5
+<% unless node.elasticsearch[:index][:number_of_shards].nil? -%>
+index.number_of_shards: <%= node.elasticsearch[:index][:number_of_shards] %>
+<% end -%>
 
 # Set the number of replicas (additional copies) of an index (1 by default):
 #
 # index.number_of_replicas: 1
+<% unless node.elasticsearch[:index][:number_of_replicas].nil? -%>
+index.number_of_replicas: <%= node.elasticsearch[:index][:number_of_replicas] %>
+<% end -%>
 
 # Note, that for development on a local machine, with small indices, it usually
 # makes sense to "disable" the distributed features:
@@ -144,12 +162,12 @@ cluster.name: elasticsearch
 # Path to directory containing configuration (this file and logging.yml):
 #
 # path.conf: /path/to/conf
-path.conf: <%= node[:elasticsearch][:path][:conf] %>
+path.conf: <%= node.elasticsearch[:path][:conf] %>
 
 # Path to directory where to store index data allocated for this node.
 #
 # path.data: /path/to/data
-path.data: <%= node[:elasticsearch][:path][:data] %>
+path.data: <%= node.elasticsearch[:path][:data] %>
 
 # Can optionally include more than one location, causing data to be striped across
 # the locations (a la RAID 0) on a file level, favouring locations with most free
@@ -164,12 +182,12 @@ path.data: <%= node[:elasticsearch][:path][:data] %>
 # Path to log files:
 #
 # path.logs: /path/to/logs
-path.logs: <%= node[:elasticsearch][:path][:logs] %>
+path.logs: <%= node.elasticsearch[:path][:logs] %>
 
 # Path to where plugins are installed:
 #
 # path.plugins: /path/to/plugins
-path.plugins: <%= node[:elasticsearch][:path][:plugins] %>
+path.plugins: <%= node.elasticsearch[:path][:plugins] %>
 
 
 #################################### Plugin ###################################
@@ -177,7 +195,9 @@ path.plugins: <%= node[:elasticsearch][:path][:plugins] %>
 # If a plugin listed here is not installed for current node, the node will not start.
 #
 # plugin.mandatory: mapper-attachments,lang-groovy
-
+<% if node.elasticsearch[:plugin][:mandatory].any? -%>
+plugin.mandatory: <%= node.elasticsearch[:plugin][:mandatory].join(',') %>
+<% end -%>
 
 ################################### Memory ####################################
 
@@ -208,36 +228,59 @@ bootstrap.mlockall: <%= default.elasticsearch[:bootstrap][:mlockall] %>
 # Set the bind address specifically (IPv4 or IPv6):
 #
 # network.bind_host: 192.168.0.1
+<% unless node.elasticsearch[:network][:bind_host].nil? -%>
+network.bind_host: <%= node.elasticsearch[:network][:bind_host] %>
+<% end -%>
 
 # Set the address other nodes will use to communicate with this node. If not
 # set, it is automatically derived. It must point to an actual IP address.
 #
 # network.publish_host: 192.168.0.1
+<% unless node.elasticsearch[:network][:publish_host].nil? -%>
+network.publish_host: <%= node.elasticsearch[:network][:publish_host] %>
+<% end -%>
 
 # Set both 'bind_host' and 'publish_host':
 #
 # network.host: 192.168.0.1
+<% unless node.elasticsearch[:network][:host].nil? -%>
+network.host: <%= node.elasticsearch[:network][:host] %>
+<% end -%>
 
 # Set a custom port for the node to node communication (9300 by default):
 #
 # transport.tcp.port: 9300
+<% unless node.elasticsearch[:transport][:tcp][:port].nil? -%>
+transport.tcp.port: <%= node.elasticsearch[:transport][:tcp][:port] %>
+<% end -%>
 
 # Enable compression for all communication between nodes (disabled by default):
 #
 # transport.tcp.compress: true
+<% unless node.elasticsearch[:transport][:tcp][:compress].nil? -%>
+transport.tcp.compress: <%= node.elasticsearch[:transport][:tcp][:compress] %>
+<% end -%>
 
 # Set a custom port to listen for HTTP traffic:
 #
 # http.port: 9200
+<% unless node.elasticsearch[:http][:port].nil? -%>
+http.port: <%= node.elasticsearch[:http][:port] %>
+<% end -%>
 
 # Set a custom allowed content length:
 #
 # http.max_content_length: 100mb
+<% unless node.elasticsearch[:http][:max_content_length].nil? -%>
+http.max_content_length: <%= node.elasticsearch[:http][:max_content_length] %>
+<% end -%>
 
 # Disable HTTP completely:
 #
 # http.enabled: false
-
+<% unless node.elasticsearch[:http][:enabled].nil? -%>
+http.enabled: <%= node.elasticsearch[:http][:enabled] %>
+<% end -%>
 
 
 ################################### Gateway ###################################
@@ -253,6 +296,9 @@ bootstrap.mlockall: <%= default.elasticsearch[:bootstrap][:mlockall] %>
 # The default gateway type is the "local" gateway (recommended):
 #
 # gateway.type: local
+<% unless node.elasticsearch[:gateway][:type].nil? -%>
+gateway.type: <%= node.elasticsearch[:gateway][:type] %>
+<% end -%>
 
 # Settings below control how and when to start the initial recovery process on
 # a full cluster restart (to reuse as much local data as possible when using shared
@@ -261,18 +307,26 @@ bootstrap.mlockall: <%= default.elasticsearch[:bootstrap][:mlockall] %>
 # Allow recovery process after N nodes in a cluster are up:
 #
 # gateway.recover_after_nodes: 1
+<% unless node.elasticsearch[:gateway][:recover_after_nodes].nil? -%>
+gateway.recover_after_nodes: <%= node.elasticsearch[:gateway][:recover_after_nodes] %>
+<% end -%>
 
 # Set the timeout to initiate the recovery process, once the N nodes
 # from previous setting are up (accepts time value):
 #
 # gateway.recover_after_time: 5m
+<% unless node.elasticsearch[:gateway][:recover_after_time].nil? -%>
+gateway.recover_after_time: <%= node.elasticsearch[:gateway][:recover_after_time] %>
+<% end -%>
 
 # Set how many nodes are expected in this cluster. Once these N nodes
 # are up (and recover_after_nodes is met), begin recovery process immediately
 # (without waiting for recover_after_time to expire):
 #
 # gateway.expected_nodes: 2
-
+<% unless node.elasticsearch[:gateway][:expected_nodes].nil? -%>
+gateway.expected_nodes: <%= node.elasticsearch[:gateway][:expected_nodes] %>
+<% end -%>
 
 ############################# Recovery Throttling #############################
 
@@ -288,16 +342,24 @@ bootstrap.mlockall: <%= default.elasticsearch[:bootstrap][:mlockall] %>
 # 2. During adding/removing nodes, rebalancing, etc
 #
 # cluster.routing.allocation.node_concurrent_recoveries: 2
+<% unless node.elasticsearch[:cluster][:routing][:allocation][:node_concurrent_recoveries].nil? -%>
+cluster.routing.allocation.node_concurrent_recoveries: <%= node.elasticsearch[:cluster][:routing][:allocation][:node_concurrent_recoveries] %>
+<% end -%>
 
 # Set to throttle throughput when recovering (eg. 100mb, by default unlimited):
 #
 # indices.recovery.max_size_per_sec: 0
+<% unless node.elasticsearch[:indices][:recovery][:max_size_per_sec].nil? -%>
+indices.recovery.max_size_per_sec: <%= node.elasticsearch[:indices][:recovery][:max_size_per_sec] %>
+<% end -%>
 
 # Set to limit the number of open concurrent streams when
 # recovering a shard from a peer:
 #
 # indices.recovery.concurrent_streams: 5
-
+<% unless node.elasticsearch[:indices][:recovery][:concurrent_streams].nil? -%>
+indices.recovery.concurrent_streams: <%= node.elasticsearch[:indices][:recovery][:concurrent_streams] %>
+<% end -%>
 
 
 ################################## Discovery ##################################
@@ -310,6 +372,7 @@ bootstrap.mlockall: <%= default.elasticsearch[:bootstrap][:mlockall] %>
 # for large clusters (>3 nodes):
 #
 # discovery.zen.minimum_master_nodes: 1
+discovery.zen.minimum_master_nodes: <%= ( @hosts.count / 2 ) + 1 %>
 
 # Set the time to wait for ping responses from other nodes when discovering.
 # Set this option to a higher value on a slow or congested network
@@ -373,10 +436,10 @@ discovery.zen.ping.unicast.hosts: ["<%= @hosts.join('","') %>"]
 #monitor.jvm.gc.ConcurrentMarkSweep.info: 5s
 #monitor.jvm.gc.ConcurrentMarkSweep.debug: 2s
 
-<% if !!node[:elasticsearch][:basic_auth] -%>
+<% unless node.elasticsearch[:basic_auth].nil? -%>
 ################################## Basic Auth ################################
 
-http.basic.enabled: <%= (!!node[:elasticsearch][:basic_auth]).to_s %>
-http.basic.user: "<%= node[:elasticsearch][:basic_auth][:user] %>"
-http.basic.password: "<%= node[:elasticsearch][:basic_auth][:password] %>"
+http.basic.enabled: <%= (!!node.elasticsearch[:basic_auth]).to_s %>
+http.basic.user: "<%= node.elasticsearch[:basic_auth][:user] %>"
+http.basic.password: "<%= node.elasticsearch[:basic_auth][:password] %>"
 <% end -%>
