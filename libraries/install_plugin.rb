@@ -82,7 +82,7 @@ module Extensions
         action :sync
       end
 
-      url = "file://#{file_location}"
+      url = "file://#{plugin_source_directory}"
     end
 
     ruby_block "Install plugin: #{name}" do
