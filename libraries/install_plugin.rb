@@ -24,6 +24,7 @@ module Extensions
   #           'karmi/elasticsearch-paramedic' => {},
   #           'lukas-vlcek/bigdesk'           => { 'version' => '1.0.0' },
   #           'hunspell'                      => { 'url' => 'https://github.com/downloads/...' }
+  #           'tom'                           => { 'git' => { 'repository' => '', revision => '', ssh_key => '' } }
   #         }
   #       }
   #     }
@@ -31,6 +32,36 @@ module Extensions
   # See <http://wiki.opscode.com/display/chef/Setting+Attributes+(Examples)> for more info.
   #
   def install_plugin name, params={}
+    
+    if params['git']
+      git_config = params['git']
+      ssh_key_file = nil
+
+      # Allow SSH key connection to git
+      if git_config.has_key?('ssh_key')
+        ssh_key_file = "/home/#{node[:elasticsearch][:user]}/.ssh/#{name}_id_rsa"
+
+        file ssh_key_file do
+          user node[:elasticsearch][:user]
+          mode "0600"
+          content git_config['ssh_key']
+        end
+      end
+
+      file_location = "#{Chef::Config[:file_cache_path]}/#{name}"
+      
+      git file_location do
+        user node[:elasticsearch][:user]
+        repository git_config['repository']
+        revision git_config['revision']                   if git_config.has_key?('revision')
+        enable_submodules git_config['enable_submodules'] if git_config.has_key?('enable_submodules')
+        ssh_wrapper "ssh -i #{ssh_key_file}"              if ssh_key_file
+
+        action :sync
+      end
+
+      url = "file://#{file_location}"
+    end
 
     ruby_block "Install plugin: #{name}" do
       block do
