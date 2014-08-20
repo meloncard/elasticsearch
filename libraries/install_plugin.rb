@@ -39,7 +39,7 @@ module Extensions
 
       # Allow SSH key connection to git
       if git_config.has_key?('ssh_key')
-        ssh_key_file = "/home/#{node[:elasticsearch][:user]}/.ssh/#{name}_id_rsa"
+        ssh_key_file = "#{Chef::Config[:file_cache_path]}/#{name}_id_rsa"
 
         file ssh_key_file do
           user node[:elasticsearch][:user]
