@@ -32,7 +32,9 @@ module Extensions
   # See <http://wiki.opscode.com/display/chef/Setting+Attributes+(Examples)> for more info.
   #
   def install_plugin name, params={}
-    
+    version = nil
+    url = nil
+
     if params['git']
       git_config = params['git']
       git_directory = "#{node[:elasticsearch][:home_dir]}/git"
@@ -82,14 +84,14 @@ module Extensions
         action :sync
       end
 
-      url = "file://#{plugin_source_directory}"
+      url     = " -url file://#{plugin_source_directory}"
+    else
+      version = params['version'] ? "/#{params['version']}" : nil
+      url     = params['url']     ? " -url #{params['url']}" : nil
     end
 
     ruby_block "Install plugin: #{name}" do
       block do
-        version = params['version'] ? "/#{params['version']}" : nil
-        url     = params['url']     ? " -url #{params['url']}" : nil
-
         command = "#{node[:elasticsearch][:bin_dir]}/plugin -install #{name}#{version}#{url}"
         Chef::Log.debug command
 
