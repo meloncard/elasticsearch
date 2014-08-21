@@ -24,7 +24,7 @@ module Extensions
   #           'karmi/elasticsearch-paramedic' => {},
   #           'lukas-vlcek/bigdesk'           => { 'version' => '1.0.0' },
   #           'hunspell'                      => { 'url' => 'https://github.com/downloads/...' }
-  #           'tom'                           => { 'git' => { 'repository' => '', revision => '', ssh_key => '' } }
+  #           'tom'                           => { 'git' => { 'repository' => '', revision => '', ssh_key => '', 'release' => 'releases/tom.zip' } }
   #         }
   #       }
   #     }
@@ -43,7 +43,10 @@ module Extensions
       git_wrapper_file = "#{plugin_directory}/git_wrapper.sh"
       ssh_key_file = nil
       plugin_source_directory = "#{plugin_directory}/source"
+      release = git_config['release'] || "releases/#{name}.zip"
 
+      release_file = "#{plugin_source_directory}/#{release}"
+      
       # Create a directory for git and plugin
       directory plugin_directory do
         user node[:elasticsearch][:user]
@@ -84,7 +87,7 @@ module Extensions
         action :sync
       end
 
-      url     = " -url file://#{plugin_source_directory}"
+      url     = " -url file://#{release_file}"
     else
       version = params['version'] ? "/#{params['version']}" : nil
       url     = params['url']     ? " -url #{params['url']}" : nil
